@@ -1,123 +1,132 @@
-$(document).ready(function(){
+$(document).ready(function () {
+    function getHtmlTableLine(tableLine) {
+        return `
+<tr>
+    <td>${tableLine.name}</td>
+    <td>${tableLine.country}</td>
+    <td>${tableLine.logo}</td>
+    <td>${tableLine.slogan}</td>
+    <td>${tableLine.head_quaters}</td>
+    <td>${tableLine.website}</td>
+    <td>${tableLine.established}</td>
+</tr>`
+    }
+
+    function replaceHtml(tableLine){
+        return `
+<tr>
+    <td>${tableLine[i].name}</td>
+    <td>${tableLine[i].country}</td>
+    <td>${tableLine[i].logo}</td>
+    <td>${tableLine[i].slogan}</td>
+    <td>${tableLine[i].head_quaters}</td>
+    <td>${tableLine[i].website}</td>
+    <td>${tableLine[i].established}</td>
+</tr>`
+    }
+
+
+    function addTableLine(tableLine, idTable) {
+        let html = getHtmlTableLine({
+            name: tableLine.name,
+            country: tableLine.country,
+            logo: tableLine.logo,
+            slogan: tableLine.slogan,
+            head_quaters: tableLine.head_quaters,
+            website: tableLine.website,
+            established: tableLine.established
+        });
+
+        $(idTable).append(html);
+    }
+
+
+
     $.ajax({
         url: "https://api.instantwebtools.net/v1/airlines",
         method: "GET",
-        dataType : "json",
-        success: function(data){
+        dataType: "json",
+        success: function (data) {
             clickConsole();
             clickRayen();
             plusTen();
             newTen();
 
-            for( let i = 0; i < 10 ; i++){
-                if (data[i] != undefined){
-                    //data[3] = undefined;
-                    let html =
-                        "<tr><td>" + data[i].name + "</td><td>"
-                        + data[i].country +"</td><td>"
-                        + data[i].logo + "</td><td>"
-                        + data[i].slogan + "</td><td>"
-                        + data[i].head_quaters + "</td><td>"
-                        + data[i].website + "</td><td>"
-                        + data[i].established + "</td><td>";
-                    $("#table1").append(html);
+            //Ajouter  les 10 lignes suivantes au tableau
+            function plusTen(idButton) {
+                let start = 11;
+                let end = 21;
+                $(idButton).on('click', function () {
+                    for (let i = start; i < end; i++) {
+                        addTableLine(data[i], "#table1");
+                    }
+                    start += 10 //start += 10
+                    end += 10 // end += 10
+                    console.log(start);
+                });
+            }
 
+
+            for (let i = 0; i < 10; i++) {
+                if (data[i] !== undefined) {
+                    const tableLine = {
+                        name:data[i].name,
+                        country:data[i].country,
+                        logo: data[i].logo,
+                        slogan: data[i].slogan,
+                        head_quaters: data[i].head_quaters,
+                        website: data[i].website,
+                        established: data[i].established,
+                    };
+                    let html = getHtmlTableLine(tableLine);
+                    $("#table1").append(html);
                 }
             }
+
             //Faire apparaitre un console.log() avec un bouton
-            function clickConsole(){
-                let test = $("#button1");
-                test.on('click', function() {
+            function clickConsole() {
+                $("#button1").on('click', function () {
                     console.log("Hello !");
                 })
             }
-            // Remplacer les lignes de tableaux par les info de Rayen avec le bouton Rayen
-            function clickRayen(){
-                $("#button2").on('click', function(){
-                    $("#table1").html(
-                        '<tr>\n' +
-                        '    <td>Rayen Airways</td>\n' +
-                        '    <td>Tunisi</td>\n' +
-                        '    <td>bg_du_94.png</td>\n' +
-                        '    <td>Going Places Together</td>\n' +
-                        '    <td>Tahia Tunsia</td>\n' +
-                        '    <td>www.rayen.com</td>\n' +
-                        '    <td>1995</td>\n' +
-                        '</tr>');
-                })
-            }
-            //Ajouter  les 10 lignes suivantes au tableau
-            function plusTen(){
-                let n = 11;
-                let p = 21;
-                $("#button3").on('click', function(){
-                    for( let i = n; i < p ; i++){
-                        let html =
-                            "<tr><td>" + data[i].name + "</td><td>"
-                            + data[i].country +"</td><td>"
-                            + data[i].logo + "</td><td>"
-                            + data[i].slogan + "</td><td>"
-                            + data[i].head_quaters + "</td><td>"
-                            + data[i].website + "</td><td>"
-                            + data[i].established + "</td><td>";
 
-                        $("#table1").append(html);
-                    }
-                    n = n+10
-                    p = p+10
+            // Remplacer les lignes de tableaux par les info de Rayen avec le bouton Rayen
+            function clickRayen() {
+                $("#button2").on('click', function () {
+                    $("#table1").html(getHtmlTableLine(
+                        {
+                            name: "Rayen",
+                            country: "Tunisie",
+                            logo: "oui.png",
+                            slogan: "Bijour",
+                            head_quaters: "MIT",
+                            website: "oui.com",
+                            established: "Oui"
+                        }
+                    ));
                 })
             }
+
+            plusTen("#button3");
 
             //Remplacer les 10 premières lignes par les 10 d'après etc...
-            function newTen(){
-                let a = 11;
-                let b = 21;
-                $("#button4").on('click', function(){
-                    if($("#table1").length){
-                        let table1 =
-                            "<tbody id=table2>"
-                            +   "</tbody>";
-                        $("#table1").replaceWith(table1);
-                    }else if($("#table2").length){
-                        let table2 =
-                            "<tbody id=table1>"
-                            +   "</tbody>";
-                        $("#table2").replaceWith(table2);
+            function newTen() {
+                let start = 11;
+                let end = 21;
+                $("#button4").on('click', function () {
+                    $("#table1").html('');
+                    for (let i = start; i < end; i++) {
+                        addTableLine(data[i], "#table1");
                     }
-                    if($("#table1").length){
-                        for( let i = a; i < b ; i++){
-                            let html =
-                                "<tr><td>" + data[i].name + "</td><td>"
-                                + data[i].country +"</td><td>"
-                                + data[i].logo + "</td><td>"
-                                + data[i].slogan + "</td><td>"
-                                + data[i].head_quaters + "</td><td>"
-                                + data[i].website + "</td><td>"
-                                + data[i].established + "</td><td>";
-                            $("#table1").append(html);
-                        }
-                        a = a+10
-                        b = b+10
-                    }else if($("#table2").length){
-                        for( let i = a; i < b ; i++){
-                            let html =
-                                "<tr><td>" + data[i].name + "</td><td>"
-                                + data[i].country +"</td><td>"
-                                + data[i].logo + "</td><td>"
-                                + data[i].slogan + "</td><td>"
-                                + data[i].head_quaters + "</td><td>"
-                                + data[i].website + "</td><td>"
-                                + data[i].established + "</td><td>";
-                            $("#table2").append(html);
-                        }
-                        a = a+10
-                        b = b+10
-                    }
+                    start += 10
+                    end += 10
+                    console.log(start);
+                    console.log(end);
                 })
             }
         },
-        error: function(err){
-            console.log("ça plante",err);
+        error: function (err) {
+            console.log("ça plante", err);
         },
     })
 });
